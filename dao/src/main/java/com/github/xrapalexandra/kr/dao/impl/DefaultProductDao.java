@@ -1,17 +1,22 @@
 package com.github.xrapalexandra.kr.dao.impl;
 
-import com.github.xrapalexandra.kr.dao.DataSource;
 import com.github.xrapalexandra.kr.dao.ProductDao;
-import com.github.xrapalexandra.kr.dao.converter.Converter;
-import com.github.xrapalexandra.kr.model.Order;
+import com.github.xrapalexandra.kr.dao.converter.ProductConverter;
+import com.github.xrapalexandra.kr.dao.entity.ProductEntity;
+import com.github.xrapalexandra.kr.dao.util.DaoUtil;
+import com.github.xrapalexandra.kr.dao.util.HibernateUtil;
 import com.github.xrapalexandra.kr.model.Product;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-
-import java.sql.*;
-import java.util.ArrayList;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultProductDao implements ProductDao {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static volatile ProductDao instance;
 
@@ -29,130 +34,100 @@ public class DefaultProductDao implements ProductDao {
     }
 
     @Override
-    public int addProduct(Product product) {
-        final String query = "INSERT INTO products (product_name, price, quantity) VALUES (?, ?, ?);";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement
-                     (query, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, product.getName());
-            statement.setInt(2, product.getPrice());
-            statement.setInt(3, product.getQuantity());
-            statement.executeUpdate();
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                generatedKeys.next();
-                return generatedKeys.getInt(1);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public Integer addProduct(Product product) {
+        ProductEntity productEntity = ProductConverter.toEntity(product);
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        try {
+            session.save(productEntity);
+            session.getTransaction().commit();
+            logger.info("{} add in database (products).", productEntity);
+            return productEntity.getId();
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            logger.info("{} is already exist in database", productEntity);
+            return null;
+        }
+        finally {
+            session.close();
         }
     }
+
+    final int MAX_RESULTS = 8;
 
     @Override
-    public int getIdProduct(Product product) {
-        final String query =
-                "SELECT product_id FROM products WHERE product_name = ? AND price = ?;";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, product.getName());
-            statement.setInt(2, product.getPrice());
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next())
-                    return rs.getInt("product_id");
-                else
-                    return 0;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public Integer getPageCount() {
+        final Session session = HibernateUtil.getSession();
+        int productCount = session.createQuery("select count(p.id) from ProductEntity  p", Long.class)
+                .getSingleResult()
+                .intValue();
+        session.close();
+        Integer result = (productCount / MAX_RESULTS);
+        if (productCount % MAX_RESULTS != 0)
+            result++;
+        return result;
     }
-
-    final static int LIMIT = 20;
 
     @Override
     public List<Product> getProductList(int page) {
-        final int offset = LIMIT * (page - 1);
-        final String query = "SELECT * FROM products ORDER BY product_name LIMIT ? OFFSET ?;";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, LIMIT);
-            statement.setInt(2, offset);
-            try (ResultSet rs = statement.executeQuery()) {
-                final List<Product> productList = new ArrayList<>();
-                while (rs.next()) {
-                    productList.add(Converter.createProduct(rs));
-                }
-                return productList;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        final Session session = HibernateUtil.getSession();
+        List<ProductEntity> productList = session
+                .createQuery("FROM ProductEntity", ProductEntity.class)
+                .setMaxResults(MAX_RESULTS)
+                .setFirstResult((page - 1) * MAX_RESULTS)
+                .list();
+        session.close();
+        return productList.stream()
+                .map(ProductConverter::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Product getProductById(Integer id) {
+        final Session session = HibernateUtil.getSession();
+        ProductEntity productEntity = session.get(ProductEntity.class, id);
+        session.close();
+        return ProductConverter.fromEntity(productEntity);
+    }
+
+    @Override
+    public Boolean delProduct(Integer productId) {
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        try {
+            session.createQuery("delete from ProductEntity p where p.id = :productId")
+                    .setParameter("productId", productId)
+                    .executeUpdate();
+            session.getTransaction().commit();
+            logger.info("product {} don't delete from database", productId);
+            return true;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            logger.info("Delete product with ID: {} from database.", productId);
+            return false;
+        }
+        finally {
+            session.close();
         }
     }
 
     @Override
-    public void updateProduct(Product product) {
-        final String query = "UPDATE products SET product_name = ?, price = ?, quantity = ? WHERE product_id = ?;";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, product.getName());
-            statement.setInt(2, product.getPrice());
-            statement.setInt(3, product.getQuantity());
-            statement.setInt(4, product.getId());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException(product + " don't update! ");
-            }
-        } catch (SQLException e) {
-
-            throw new RuntimeException(e);
+    public Boolean updateProduct(Product product) {
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        try {
+            ProductEntity productEntity = session.get(ProductEntity.class, product.getId());
+            DaoUtil.setNewValues(product, productEntity);
+            session.getTransaction().commit();
+            logger.info("{} update in database.", productEntity);
+            return true;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            logger.info("{} is already exist in database.", product.getName());
+            return false;
         }
-    }
-
-    @Override
-    public Product getProductById(int id) {
-        final String query = "SELECT * FROM products WHERE product_id = ?";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)
-        ) {
-            statement.setInt(1, id);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    return Converter.createProduct(rs);
-                } else return null;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void delProduct(int id) {
-        final String query = "DELETE FROM products WHERE product_id = ?";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)
-        ) {
-            statement.setInt(1, id);
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0)
-                throw new RuntimeException("Can't delete product with ID: " + id + " from database!");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void updateProductQuantity(Order order) {
-        int newQuantity = this.getProductById(order.getProductId()).getQuantity()- order.getQuantity();
-        final String query = "UPDATE products SET quantity = ? WHERE product_id = ?;";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, newQuantity);
-            statement.setInt(2, order.getProductId());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("product" + order.getProductId() + " don't update with" + order + "! ");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        finally {
+            session.close();
         }
     }
 }

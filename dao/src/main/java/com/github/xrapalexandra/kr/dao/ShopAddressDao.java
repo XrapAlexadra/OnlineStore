@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface ShopAddressDao {
 
-    int addAddress(ShopAddress shopAddress);
+    Integer addAddress(ShopAddress shopAddress);
 
-    void delAddress(ShopAddress shopAddress);
+    void delAddress(Integer shopAddressId);
 
     void updateAddress(ShopAddress newShopAddress);
 
-    List<ShopAddress> getShopAddressList();
+    List<ShopAddress> getAddressList();
 }

@@ -6,10 +6,12 @@ import com.github.xrapalexandra.kr.service.UserService;
 import com.github.xrapalexandra.kr.service.impl.DefaultUserService;
 import com.github.xrapalexandra.kr.web.WebUtils;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet(name = "AuthServlet", urlPatterns = {"/auth"})
 public class AuthServlet extends HttpServlet {
 
     private UserService userService = DefaultUserService.getInstance();
@@ -28,8 +30,8 @@ public class AuthServlet extends HttpServlet {
         String login = req.getParameter("login");
         User user = new User(login, Role.USER, req.getParameter("pass"));
 
-        if (userService.saveUserInDB(user) == null) {
-            req.setAttribute("alreadyExist", login);
+        if (userService.addUser(user) == null) {
+            req.setAttribute("error", "Пользователь с таким логином уже существует. Используйте другой.");
             req.setAttribute("pageJsp", "/pages/auth.jsp");
         } else
             req.getSession().setAttribute("user", user);

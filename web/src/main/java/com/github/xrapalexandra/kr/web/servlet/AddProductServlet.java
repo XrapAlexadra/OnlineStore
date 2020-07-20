@@ -3,29 +3,32 @@ package com.github.xrapalexandra.kr.web.servlet;
 import com.github.xrapalexandra.kr.model.Product;
 import com.github.xrapalexandra.kr.service.ProductService;
 import com.github.xrapalexandra.kr.service.impl.DefaultProductService;
+import com.github.xrapalexandra.kr.web.WebUtils;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
+
+@WebServlet(name = "AddProductServlet", urlPatterns = {"/addProduct"})
 public class AddProductServlet extends HttpServlet {
     private ProductService productService = DefaultProductService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp){
-        Product product = new Product();
-        product.setName(req.getParameter("name"));
-        product.setPrice(Integer.parseInt(req.getParameter("price")));
-        product.setQuantity(Integer.parseInt(req.getParameter("quantity")));
+        req.setAttribute("pageJsp", "/pages/addProduct.jsp");
+        WebUtils.forwardJSP("index", req, resp);
 
-        productService.addProduct(product);
+    }
 
-        try {
-            resp.sendRedirect("/web/productList");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp){
+        Product product = WebUtils.getProductFromReq(req);
+        if (!productService.addProduct(product))
+            req.setAttribute("error", "Невозможно добавить! Продукт с таким названием уже существует!");
+        else
+            req.setAttribute("message", "Продукт успешно добавлен!");
+        WebUtils.forward("adminProductList", req, resp);
     }
 }

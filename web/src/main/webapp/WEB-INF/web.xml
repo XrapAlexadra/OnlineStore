@@ -7,141 +7,6 @@
   <display-name>Archetype Created Web Application</display-name>
 
 
-  <servlet>
-    <servlet-name>AuthServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.AuthServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AuthServlet</servlet-name>
-    <url-pattern>/auth</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>LoginServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.LoginServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>LoginServlet</servlet-name>
-    <url-pattern>/login</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ExitServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.ExitServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ExitServlet</servlet-name>
-    <url-pattern>/exit</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ProductListServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.ProductListServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ProductListServlet</servlet-name>
-    <url-pattern>/productList</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>AddProductServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.AddProductServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AddProductServlet</servlet-name>
-    <url-pattern>/addProduct</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ProductToChangeServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.ProductToChangeServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ProductToChangeServlet</servlet-name>
-    <url-pattern>/toChange</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ChangeProductServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.ChangeProductServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ChangeProductServlet</servlet-name>
-    <url-pattern>/change</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>DelProductServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.DelProductServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DelProductServlet</servlet-name>
-    <url-pattern>/del</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>BasketServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.BasketServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BasketServlet</servlet-name>
-    <url-pattern>/basket</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>AddOrderServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.AddOrderServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AddOrderServlet</servlet-name>
-    <url-pattern>/addOrder</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>SettingOrderServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.SettingOrderServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>SettingOrderServlet</servlet-name>
-    <url-pattern>/setOrder</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>DelFromBasketServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.DelFromBasketServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DelFromBasketServlet</servlet-name>
-    <url-pattern>/delFromBasket</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>AdminBasketServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.AdminBasketServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AdminBasketServlet</servlet-name>
-    <url-pattern>/adminBasket</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ChangeBasketServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.ChangeBasketServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ChangeBasketServlet</servlet-name>
-    <url-pattern>/changeBasket</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>WriteOfServlet</servlet-name>
-    <servlet-class>com.github.xrapalexandra.kr.web.servlet.WriteOfServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>WriteOfServlet</servlet-name>
-    <url-pattern>/writeOff</url-pattern>
-  </servlet-mapping>
-
   <filter>
     <filter-name>OnlyForAdminFilter</filter-name>
     <filter-class>com.github.xrapalexandra.kr.web.filter.OnlyForAdminFilter</filter-class>
@@ -151,10 +16,24 @@
     <filter-name>OnlyForAdminFilter</filter-name>
     <servlet-name>ChangeBasketServlet</servlet-name>
     <servlet-name>AdminBasketServlet</servlet-name>
-    <servlet-name>WriteOfServlet</servlet-name>
+    <servlet-name>AdminProductListServlet</servlet-name>
     <servlet-name>DelProductServlet</servlet-name>
-    <servlet-name>ProductToChangeServlet</servlet-name>
+    <servlet-name>DelShopAddressServlet</servlet-name>
     <servlet-name>AddProductServlet</servlet-name>
     <servlet-name>ChangeProductServlet</servlet-name>
+    <servlet-name>DelShopAddressServlet</servlet-name>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>EncodingSetterFilter</filter-name>
+    <filter-class>com.github.xrapalexandra.kr.web.filter.EncodingSetterFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>EncodingSetterFilter</filter-name>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
 </web-app>

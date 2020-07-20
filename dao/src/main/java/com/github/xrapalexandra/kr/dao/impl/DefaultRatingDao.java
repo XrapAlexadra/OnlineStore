@@ -1,12 +1,27 @@
 package com.github.xrapalexandra.kr.dao.impl;
 
-import com.github.xrapalexandra.kr.dao.DataSource;
 import com.github.xrapalexandra.kr.dao.RatingDao;
+import com.github.xrapalexandra.kr.dao.converter.ProductConverter;
+import com.github.xrapalexandra.kr.dao.converter.RatingConverter;
+import com.github.xrapalexandra.kr.dao.entity.ProductEntity;
+import com.github.xrapalexandra.kr.dao.entity.RatingEntity;
+import com.github.xrapalexandra.kr.dao.util.HibernateUtil;
+import com.github.xrapalexandra.kr.model.Product;
 import com.github.xrapalexandra.kr.model.Rating;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultRatingDao implements RatingDao {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static volatile RatingDao instance;
 
@@ -24,57 +39,53 @@ public class DefaultRatingDao implements RatingDao {
     }
 
     @Override
-    public int addRating(Rating rating) {
-        final String query = "INSERT INTO rating_product (rating, user_id, product_id) " +
-                "VALUES (?, ?, ?);";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement
-                     (query, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setInt(1, rating.getRating());
-            statement.setInt(2, rating.getUserId());
-            statement.setInt(3, rating.getProductId());
-            statement.executeUpdate();
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                generatedKeys.next();
-                return generatedKeys.getInt(1);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public Integer addRating(Rating rating) {
+        RatingEntity ratingEntity = RatingConverter.toEntity(rating);
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        session.save(ratingEntity);
+        session.getTransaction().commit();
+        logger.info("Add {} into DataBase.", ratingEntity);
+        session.close();
+        return ratingEntity.getId();
     }
 
     @Override
-    public void delRating(Rating rating) {
-        final String query = "DELETE FROM rating_product WHERE rating_id = ?;";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, rating.getRatingId());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException(rating + " don't delete!");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public void delRating(Integer ratingId) {
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        RatingEntity ratingEntity = session.get(RatingEntity.class, ratingId);
+        System.out.println(ratingEntity);
+        session.delete(ratingEntity);
+        session.getTransaction().commit();
+        logger.info("Delete {} from DataBase.", ratingId);
+        session.close();
     }
 
     @Override
-    public Double getAvrRatingByProductId(int productId) {
-        final String query =
-                "SELECT AVG(r.rating) FROM (SELECT rating FROM rating_product WHERE product_id = ? ) AS r;";
+    public Double getAvrRatingByProduct(Product product) {
+        ProductEntity productEntity = ProductConverter.toEntity(product);
 
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, productId);
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next())
-                    return rs.getDouble(1);
+        final Session session = HibernateUtil.getSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Double> criteria = cb.createQuery(Double.class);
+        Root<RatingEntity> rating = criteria.from(RatingEntity.class);
 
-                else
-                    return null;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        criteria.where(cb.equal(rating.get("product"), productEntity));
+        criteria.select(cb.avg(rating.get("mark")));
+        Double average = session.createQuery(criteria).getSingleResult();
+        session.close();
+        return average;
+    }
+
+    @Override
+    public List<Rating> getProductRating(Integer productId) {
+        final Session session = HibernateUtil.getSession();
+        ProductEntity productEntity = session.get(ProductEntity.class, productId);
+        List<Rating> ratingList = productEntity.getRatingList().stream()
+                .map(RatingConverter::fromEntity)
+                .collect(Collectors.toList());
+        session.close();
+        return ratingList;
     }
 }

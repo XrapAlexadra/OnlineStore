@@ -7,9 +7,6 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <form method="post" action="${pageContext.request.contextPath}/login">
-                    <c:if test="${requestScope.error != null}">
-                        <h5>${requestScope.error}</h5>
-                    </c:if>
                     <div class="form-row">
                         <label for="login" class="col-3">Логин</label>
                         <div class="col-9">

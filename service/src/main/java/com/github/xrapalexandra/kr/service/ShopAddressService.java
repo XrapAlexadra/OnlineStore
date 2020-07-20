@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ShopAddressService {
 
-    int addAddress(ShopAddress shopAddress);
+    Integer addAddress(ShopAddress shopAddress);
 
-    void delAddress(ShopAddress shopAddress);
+    void delAddress(Integer shopAddressId);
 
     void updateAddress(ShopAddress newShopAddress);
 

@@ -29,4 +29,5 @@ public class BasketBean {
     public synchronized List<Integer> getOrders(){
         return new ArrayList<>(basket);
     }
+
 }

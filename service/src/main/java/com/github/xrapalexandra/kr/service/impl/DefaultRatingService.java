@@ -2,12 +2,15 @@ package com.github.xrapalexandra.kr.service.impl;
 
 import com.github.xrapalexandra.kr.dao.RatingDao;
 import com.github.xrapalexandra.kr.dao.impl.DefaultRatingDao;
+import com.github.xrapalexandra.kr.model.Product;
 import com.github.xrapalexandra.kr.model.Rating;
 import com.github.xrapalexandra.kr.service.RatingService;
+import com.github.xrapalexandra.kr.service.util.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 public class DefaultRatingService implements RatingService {
 
@@ -30,23 +33,31 @@ public class DefaultRatingService implements RatingService {
         return localInstance;
     }
 
-    private final RatingDao ratingDao = DefaultRatingDao.getInstance();
+    private RatingDao ratingDao = DefaultRatingDao.getInstance();
 
     @Override
-    public int addRating(Rating rating) {
-        rating.setRatingId(ratingDao.addRating(rating));
+    public Integer addRating(Rating rating) {
+        List<Rating> ratingList = ratingDao.getProductRating(rating.getProduct().getId());
+        if (ServiceUtil.isUserExist(ratingList, rating.getUser())) {
+            logger.info("Not add {} into DataBase.", rating);
+            return null;
+        }
+        rating.setId(ratingDao.addRating(rating));
         logger.info("Add {} into DataBase.", rating);
-        return rating.getRatingId();
+        return rating.getId();
     }
 
     @Override
-    public void delRating(Rating rating) {
-        ratingDao.delRating(rating);
-        logger.info("Delete {} from DataBase.", rating);
+    public void delRating(Integer ratingId) {
+        ratingDao.delRating(ratingId);
+        logger.info("Delete {} from DataBase.", ratingId);
     }
 
     @Override
-    public Double getAvrRatingByProductId(int productId) {
-        return ratingDao.getAvrRatingByProductId(productId);
+    public Integer getAvrRatingByProduct(Product product) {
+        Double average = ratingDao.getAvrRatingByProduct(product);
+        if (average == null)
+            return null;
+        return (int) Math.round(average);
     }
 }

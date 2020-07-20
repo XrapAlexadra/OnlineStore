@@ -1,12 +1,13 @@
 package com.github.xrapalexandra.kr.service;
 
+import com.github.xrapalexandra.kr.model.Product;
 import com.github.xrapalexandra.kr.model.Rating;
 
 public interface RatingService {
 
-    int addRating(Rating rating);
+    Integer addRating(Rating rating);
 
-    void delRating(Rating rating);
+    void delRating(Integer ratingId);
 
-    Double getAvrRatingByProductId(int productId);
+    Integer getAvrRatingByProduct(Product product);
 }
