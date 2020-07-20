@@ -20,7 +20,6 @@
     <packaging>war</packaging>
 
     <name>web Maven Webapp</name>
-
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
