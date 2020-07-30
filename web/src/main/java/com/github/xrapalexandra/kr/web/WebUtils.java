@@ -1,6 +1,7 @@
 package com.github.xrapalexandra.kr.web;
 
-import com.github.xrapalexandra.kr.model.Status;
+
+import com.github.xrapalexandra.kr.model.Product;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +34,14 @@ public class WebUtils {
         return false;
     }
 
-    public static Status createStatus(String s){
-//        Status[] status = {Status.ORDER, Status.CONFIRMED, Status.PAID};
-        return Status.valueOf(s);
+
+    public static Product getProductFromReq(HttpServletRequest req){
+        Product product = new Product();
+        product.setName(req.getParameter("name"));
+        product.setPrice(Integer.parseInt(req.getParameter("price")));
+        product.setQuantity(Integer.parseInt(req.getParameter("quantity")));
+        product.setDescription(req.getParameter("description"));
+        product.setImage(req.getParameter("image"));
+        return product;
     }
 }

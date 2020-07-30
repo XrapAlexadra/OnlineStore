@@ -2,7 +2,6 @@ package com.github.xrapalexandra.kr.service.impl;
 
 import com.github.xrapalexandra.kr.dao.ProductDao;
 import com.github.xrapalexandra.kr.dao.impl.DefaultProductDao;
-import com.github.xrapalexandra.kr.model.Order;
 import com.github.xrapalexandra.kr.model.Product;
 import com.github.xrapalexandra.kr.service.ProductService;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import java.util.List;
 public class DefaultProductService implements ProductService {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private final ProductDao productDao = DefaultProductDao.getInstance();
+    private ProductDao productDao = DefaultProductDao.getInstance();
 
     private DefaultProductService() {
     }
@@ -39,45 +38,45 @@ public class DefaultProductService implements ProductService {
     }
 
     @Override
-    public void addProduct(Product product) {
-        int productId = productDao.getIdProduct(product);
-        if (productId == 0) {
-            product.setId(productDao.addProduct(product));
-            logger.info("{} add in database (products).", product);
+    public Integer getPageCount(){
+        return productDao.getPageCount();
+    }
+
+    @Override
+    public Boolean addProduct(Product product) {
+        product.setId(productDao.addProduct(product));
+        if (product.getId() == null) {
+            logger.info("{} is already exist in database", product);
+            return false;
         } else {
-            Product newProduct = productDao.getProductById(productId);
-            int allQuantity = newProduct.getQuantity() + product.getQuantity();
-            newProduct.setQuantity(allQuantity);
-            productDao.updateProduct(newProduct);
-            logger.info("{} is already exist in database. Update product {}", product, newProduct);
+            logger.info("{} add in database (products).", product);
+            return true;
         }
     }
 
     @Override
     public Boolean updateProduct(Product product) {
-        if (productDao.getIdProduct(product) == 0) {
-            productDao.updateProduct(product);
+        Boolean result = productDao.updateProduct(product);
+        if (!result)
+            logger.info("{} is already exist in database.", product.getName());
+        else
             logger.info("{} update in database.", product);
-            return true;
-        } else {
-            logger.info("{} is already exist in database.", product);
-            return false;
-        }
+        return result;
     }
 
     @Override
-    public void updateProductQuantity(Order order) {
-        productDao.updateProductQuantity(order);
-    }
-
-    @Override
-    public void delProduct(int id) {
-        productDao.delProduct(id);
-        logger.info("Delete product with ID: {} from database.", id);
+    public Boolean delProduct(Integer productId) {
+        Boolean result = productDao.delProduct(productId);
+        if (!result)
+            logger.info("product {} don't delete from database", productId);
+        else
+            logger.info("Delete product with ID: {} from database.", productId);
+        return result;
     }
 
     @Override
     public Product getProductById(int product_id) {
         return productDao.getProductById(product_id);
     }
+
 }

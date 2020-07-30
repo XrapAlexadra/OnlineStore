@@ -6,10 +6,7 @@
     <div class="card-body">
         <div class="panel panel-default">
             <div class="panel-body">
-                <form method="post" action="${pageContext.request.contextPath}/login">
-                    <c:if test="${requestScope.alreadyExist != null}">
-                        <h5>Пользователь с логином "${requestScope.alreadyExist}" уже существует. Используйте другой.</h5>
-                    </c:if>
+                <form method="post" action="${pageContext.request.contextPath}/auth">
                     <div class="form-row">
                         <label for="login" class="col-3">Логин</label>
                         <div class="col-9">

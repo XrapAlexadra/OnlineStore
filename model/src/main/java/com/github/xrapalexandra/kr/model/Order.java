@@ -1,52 +1,45 @@
 package com.github.xrapalexandra.kr.model;
 
+import java.util.List;
+
 public class Order {
 
-    private int id;
-    private int userId;
-    private int productId;
-    private int quantity;
+    private Integer id;
+    private User user;
+    private List<OrderContent> contentList;
     private Status status = Status.ORDER;
 
     public Order() {
     }
 
-    public Order(int userId, int productId, int quantity) {
-        this.userId = userId;
-        this.productId = productId;
-        this.quantity = quantity;
+    public Order(User user, List<OrderContent> contentList, Status status) {
+        this.user = user;
+        this.contentList = contentList;
+        this.status = status;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public int getProductId() {
-        return productId;
+    public List<OrderContent> getContentList() {
+        return contentList;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setContentList(List<OrderContent> contentList) {
+        this.contentList = contentList;
     }
 
     public Status getStatus() {
@@ -55,16 +48,5 @@ public class Order {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                ", status=" + status +
-                '}';
     }
 }

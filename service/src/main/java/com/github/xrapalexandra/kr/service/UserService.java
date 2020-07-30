@@ -1,13 +1,17 @@
 package com.github.xrapalexandra.kr.service;
 
 import com.github.xrapalexandra.kr.model.User;
+import com.github.xrapalexandra.kr.model.UserAddress;
 
 public interface UserService {
 
-    User saveUserInDB(User user);
+    User addUser(User user);
 
-    User login(String login, String pass);
+    User logIn(String login, String pass);
 
-    User getUserByLogin(String login);
+    void updatePass(User user);
 
+    void updateAddress(User user);
+
+    UserAddress getUserAddress(Integer userId);
 }

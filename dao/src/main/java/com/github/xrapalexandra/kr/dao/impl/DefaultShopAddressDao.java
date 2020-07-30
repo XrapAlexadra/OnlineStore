@@ -1,15 +1,23 @@
 package com.github.xrapalexandra.kr.dao.impl;
 
-import com.github.xrapalexandra.kr.dao.DataSource;
 import com.github.xrapalexandra.kr.dao.ShopAddressDao;
-import com.github.xrapalexandra.kr.dao.converter.Converter;
+import com.github.xrapalexandra.kr.dao.converter.ShopAddressConverter;
+import com.github.xrapalexandra.kr.dao.entity.ShopAddressEntity;
+import com.github.xrapalexandra.kr.dao.util.HibernateUtil;
 import com.github.xrapalexandra.kr.model.ShopAddress;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.*;
-import java.util.ArrayList;
+
+import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultShopAddressDao implements ShopAddressDao {
+
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static volatile ShopAddressDao instance;
 
@@ -26,79 +34,53 @@ public class DefaultShopAddressDao implements ShopAddressDao {
         return localInstance;
     }
 
-    @Override
-    public int addAddress(ShopAddress shopAddress) {
-        final String query = "INSERT INTO shop_address (city_id, street, house_number)" +
-                " VALUES ((SELECT city_id FROM city WHERE city_name = ?), ?, ?);";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement
-                     (query, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, shopAddress.getCity());
-            statement.setString(2, shopAddress.getStreet());
-            statement.setInt(3, shopAddress.getHouseNumber());
-            statement.executeUpdate();
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                generatedKeys.next();
-                return generatedKeys.getInt(1);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-    public void delAddress(ShopAddress shopAddress) {
-        final String query = "DELETE FROM shop_address WHERE id_shop = ?;";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, shopAddress.getId());
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException(shopAddress + " don't delete!");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public Integer addAddress(ShopAddress shopAddress) {
+        ShopAddressEntity shopAddressEntity = ShopAddressConverter.toEntity(shopAddress);
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        session.save(shopAddressEntity);
+        session.getTransaction().commit();
+        logger.info("Add {} into DataBase.", shopAddressEntity);
+        session.close();
+        return shopAddressEntity.getId();
     }
 
     @Override
-    public void updateAddress(ShopAddress newShopAddress) {
-        final String query = "UPDATE shop_address SET " + "" +
-                "street = ?, house_number = ?, city_id = (SELECT city_id FROM city WHERE city_name = ?) " +
-                "WHERE id_shop = ?";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, newShopAddress.getStreet());
-            statement.setInt(2, newShopAddress.getHouseNumber());
-            statement.setString(3, newShopAddress.getCity());
-            statement.setInt(4, newShopAddress.getId());
-            statement.executeUpdate();
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows == 0) {
-                throw new RuntimeException("ShopAddress " + newShopAddress.getId() + " don't update with " + newShopAddress);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public void delAddress(Integer shopAddressId) {
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        ShopAddressEntity address = session.get(ShopAddressEntity.class, shopAddressId);
+        session.delete(address);
+        session.getTransaction().commit();
+        logger.info("Delete {} from DataBase.", shopAddressId);
+        session.close();
     }
 
     @Override
-    public List<ShopAddress> getShopAddressList() {
-        final String query = "SELECT sa.id_shop, sa.house_number, sa.street, c.city_name FROM shop_address AS sa" +
-                " JOIN city AS c ON sa.city_id = c.city_id";
-        try (Connection connection = DataSource.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            try (ResultSet rs = statement.executeQuery()) {
-                final List<ShopAddress> shopAddressesList = new ArrayList<>();
-                while (rs.next()) {
-                    shopAddressesList.add(Converter.createShopAddress(rs));
-                }
-                if(shopAddressesList.size() == 0)
-                    return null;
-                else
-                    return shopAddressesList;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public void updateAddress(ShopAddress shopAddress) {
+        final Session session = HibernateUtil.getSession();
+        session.beginTransaction();
+        ShopAddressEntity address = session.get(ShopAddressEntity.class, shopAddress.getId());
+        address.setBuilding(shopAddress.getBuilding());
+        address.setStreet(shopAddress.getStreet());
+        address.setCity(shopAddress.getCity());
+        session.getTransaction().commit();
+        logger.info("Update in DataBase to {}", address);
+        session.close();
+    }
+
+    @Override
+    public List<ShopAddress> getAddressList() {
+        Session session = HibernateUtil.getSession();
+        Query query = session
+                .createQuery("FROM ShopAddressEntity");
+        query.setCacheable(true);
+        final List<ShopAddressEntity> addressList =query.getResultList();
+        session.close();
+        return addressList.stream()
+                .map(ShopAddressConverter::fromEntity)
+                .collect(Collectors.toList());
     }
 }

@@ -4,10 +4,11 @@ import com.google.common.base.Objects;
 
 public class User {
 
-    private int userId;
+    private Integer Id;
     private String login;
     private String pass;
     private Role role;
+    private UserAddress address;
 
     public User() {
     }
@@ -18,12 +19,12 @@ public class User {
         this.role = role;
     }
 
-    public int getUserId() {
-        return userId;
+    public Integer getId() {
+        return Id;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setId(Integer id) {
+        this.Id = id;
     }
 
     public String getLogin() {
@@ -50,6 +51,14 @@ public class User {
         this.role = role;
     }
 
+    public UserAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(UserAddress address) {
+        this.address = address;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,7 +77,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "userId=" + userId +
+                "userId=" + Id +
                 ", login='" + login + '\'' +
                 ", pass='" + pass + '\'' +
                 ", role=" + role +

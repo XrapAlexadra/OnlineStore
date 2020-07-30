@@ -5,11 +5,13 @@ import com.github.xrapalexandra.kr.service.ProductService;
 import com.github.xrapalexandra.kr.service.impl.DefaultProductService;
 import com.github.xrapalexandra.kr.web.WebUtils;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+@WebServlet(name = "ChangeProductServlet", urlPatterns = {"/change"})
 public class ChangeProductServlet extends HttpServlet {
 
     ProductService productService = DefaultProductService.getInstance();
@@ -22,13 +24,19 @@ public class ChangeProductServlet extends HttpServlet {
         req.setAttribute("product", product);
         req.setAttribute("pageJsp", "/pages/changeProduct.jsp");
         WebUtils.forwardJSP("index", req, resp);
-//        Product product = new Product();
-//        product.setName(req.getParameter("name"));
-//        product.setPrice(Integer.parseInt(req.getParameter("price")));
-//        product.setQuantity(Integer.parseInt(req.getParameter("quantity")));
-//        product.setId(Integer.parseInt(req.getParameter("productId")));
-//        if (!productService.updateProduct(product))
-//            req.setAttribute("error", "Невозможно изменить товар! Такой уже существует!");
-//        WebUtils.forward("productList", req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        Product product = WebUtils.getProductFromReq(req);
+        String productId = req.getParameter("productId");
+        product.setId(Integer.parseInt(productId));
+
+        if (!productService.updateProduct(product))
+            req.setAttribute("error", "Невозможно изменить товар! Такой уже существует!");
+       else
+            req.setAttribute("message", "Товар изменен");
+
+       WebUtils.forward("adminProductList", req, resp);
     }
 }

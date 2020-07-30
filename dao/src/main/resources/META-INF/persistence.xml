@@ -4,18 +4,33 @@
              version="2.0">
     <persistence-unit name="com/github/xrapalexandra/kr/dao" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class></class>
+        <class>com.github.xrapalexandra.kr.dao.entity.ShopAddressEntity</class>
+        <class>com.github.xrapalexandra.kr.dao.entity.UserEntity</class>
+        <class>com.github.xrapalexandra.kr.dao.entity.ProductEntity</class>
+        <class>com.github.xrapalexandra.kr.dao.entity.RatingEntity</class>
+        <class>com.github.xrapalexandra.kr.dao.entity.OrderEntity</class>
+        <class>com.github.xrapalexandra.kr.dao.entity.OrderContentEntity</class>
+        <class>com.github.xrapalexandra.kr.dao.entity.UserAddressEntity</class>
+
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ita?createDatabaseIfNotExist=true"/>
-            <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value="rootroot"/>
-            <property name="hibernate.dialect.storage_engine" value="innodb"/>
-            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="javax.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url"
+                      value="jdbc:mariadb://localhost:3306/kr?createDatabaseIfNotExist=true"/>
+            <property name="javax.persistence.jdbc.user" value="admin"/>
+            <property name="javax.persistence.jdbc.password" value="admin123"/>
+            <property name="hibernate.dialect.storage_engine" value="org.hibernate.dialect.MariaDB10Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
             <property name="hibernate.use_sql_comments" value="false"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.connection.pool_size" value="10"/>
+
+            <property name="hibernate.cache.region.factory_class"
+                      value="org.hibernate.cache.ehcache.EhCacheRegionFactory"/>
+            <property name="hibernate.cache.use_second_level_cache" value="true"/>
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <property name="hibernate.cache.auto_evict_collection_cache" value="true"/>
+            <property name="net.sf.ehcache.configurationResourceName" value="ehcache.xml"/>
         </properties>
     </persistence-unit>
 </persistence>

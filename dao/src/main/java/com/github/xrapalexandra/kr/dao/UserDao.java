@@ -1,12 +1,21 @@
 package com.github.xrapalexandra.kr.dao;
 
 import com.github.xrapalexandra.kr.model.User;
+import com.github.xrapalexandra.kr.model.UserAddress;
 
 public interface UserDao {
 
-    int saveUser(User user);
+    Integer addUser(User user);
 
-    User getUserByLogin(String login);
+    User getByLogin(String login);
 
-    void delUser(User user);
+    Boolean delUser(Integer userId);
+
+    void updatePass(User user);
+
+    void updateAddress(User user);
+
+    Integer addAddress(User user);
+
+    UserAddress getUserAddress(Integer userId);
 }

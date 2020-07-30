@@ -4,24 +4,12 @@ import java.util.Objects;
 
 public class Product {
 
-    private int id;
+    private Integer id;
     private String name;
     private Integer quantity;
     private Integer price;
-    private String img ="11649644.jpg";
     private String description;
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImg() {
-        return img;
-    }
+    private String image;
 
     public Product() {
     }
@@ -49,19 +37,17 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", quantity=" + quantity +
                 ", price=" + price +
-                ", img='" + img + '\'' +
                 '}';
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -89,4 +75,19 @@ public class Product {
         this.quantity = quantity;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 }

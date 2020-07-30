@@ -5,10 +5,12 @@ import com.github.xrapalexandra.kr.service.UserService;
 import com.github.xrapalexandra.kr.service.impl.DefaultUserService;
 import com.github.xrapalexandra.kr.web.WebUtils;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
     private UserService userService = DefaultUserService.getInstance();
@@ -26,7 +28,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         String login = req.getParameter("login");
         String pass = req.getParameter("pass");
-        User user = userService.login(login, pass);
+        User user = userService.logIn(login, pass);
 
         if (user == null) {
             req.setAttribute("error", "Неправильный логин или пароль!");

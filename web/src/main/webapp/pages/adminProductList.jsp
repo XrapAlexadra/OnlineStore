@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 
@@ -19,7 +19,7 @@
             <th scope="row"><c:out value="${index.count}"/></th>
             <td>
                 <a href="${pageContext.request.contextPath}/change?pId=${item.id}">
-                    <img src="${pageContext.request.contextPath}/img/${item.img}" alt="${item.name}" height="70">
+                    <img src="${item.image}" alt="${item.name}" height="70">
                 </a>
             </td>
             <td>
@@ -28,7 +28,7 @@
                 </a>
             </td>
             <td><c:out value="${item.price}"/></td>
-            <td><c:out value="${item.price}"/></td>
+            <td><c:out value="${item.quantity}"/></td>
         </tr>
     </c:forEach>
     </tbody>

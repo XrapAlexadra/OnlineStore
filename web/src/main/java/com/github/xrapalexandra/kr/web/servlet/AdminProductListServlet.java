@@ -1,6 +1,5 @@
 package com.github.xrapalexandra.kr.web.servlet;
 
-
 import com.github.xrapalexandra.kr.service.ProductService;
 import com.github.xrapalexandra.kr.service.impl.DefaultProductService;
 import com.github.xrapalexandra.kr.web.WebUtils;
@@ -10,8 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "AdminProductServlet", urlPatterns = {"/adminProduct"})
-public class AdminProductServlet extends HttpServlet {
+
+@WebServlet(name = "AdminProductListServlet", urlPatterns = {"/adminProductList"})
+public class AdminProductListServlet extends HttpServlet {
 
     ProductService productService = DefaultProductService.getInstance();
 
@@ -22,4 +22,8 @@ public class AdminProductServlet extends HttpServlet {
         WebUtils.forwardJSP("index", req, resp);
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp){
+        doGet(req, resp);
+    }
 }

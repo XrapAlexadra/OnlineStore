@@ -2,56 +2,46 @@ package com.github.xrapalexandra.kr.model;
 
 public class Rating {
 
-    private int ratingId;
-    private int rating;
-    private int userId;
-    private int productId;
+    private Integer Id;
+    private Integer mark;
+    private User user;
+    private Product product;
 
-    public Rating(int rating, int userId, int productId) {
-        this.rating = rating;
-        this.userId = userId;
-        this.productId = productId;
+    public Rating(Integer mark, User user, Product product) {
+        this.mark = mark;
+        this.user = user;
+        this.product = product;
     }
 
-    public int getRatingId() {
-        return ratingId;
+    public Integer getId() {
+        return Id;
     }
 
-    public void setRatingId(int ratingId) {
-        this.ratingId = ratingId;
+    public void setId(Integer id) {
+        Id = id;
     }
 
-    public int getRating() {
-        return rating;
+    public Integer getMark() {
+        return mark;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setMark(Integer mark) {
+        this.mark = mark;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public int getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    @Override
-    public String toString() {
-        return "Rating{" +
-                "ratingId=" + ratingId +
-                ", rating=" + rating +
-                ", userId=" + userId +
-                ", productId=" + productId +
-                '}';
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

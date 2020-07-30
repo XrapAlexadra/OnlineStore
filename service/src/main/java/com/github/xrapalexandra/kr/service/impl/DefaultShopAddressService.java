@@ -32,19 +32,19 @@ public class DefaultShopAddressService implements ShopAddressService {
         return localInstance;
     }
 
-    private final ShopAddressDao shopAddressDao = DefaultShopAddressDao.getInstance();
+    private ShopAddressDao shopAddressDao = DefaultShopAddressDao.getInstance();
 
     @Override
-    public int addAddress(ShopAddress shopAddress) {
+    public Integer addAddress(ShopAddress shopAddress) {
         shopAddress.setId(shopAddressDao.addAddress(shopAddress));
         logger.info("Add {} into DataBase.", shopAddress);
         return shopAddress.getId();
     }
 
     @Override
-    public void delAddress(ShopAddress shopAddress) {
-        shopAddressDao.delAddress(shopAddress);
-        logger.info("Delete {} from DataBase.", shopAddress);
+    public void delAddress(Integer shopAddressId) {
+        shopAddressDao.delAddress(shopAddressId);
+        logger.info("Delete {} from DataBase.", shopAddressId);
     }
 
     @Override
@@ -55,6 +55,6 @@ public class DefaultShopAddressService implements ShopAddressService {
 
     @Override
     public List<ShopAddress> getShopAddressList() {
-        return shopAddressDao.getShopAddressList();
+        return shopAddressDao.getAddressList();
     }
 }
