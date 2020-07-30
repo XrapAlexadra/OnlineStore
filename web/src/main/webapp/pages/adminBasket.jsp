@@ -1,0 +1,55 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<html>
+<head>
+    <title>Администрирование заказов</title>
+    <link href="${pageContext.request.contextPath}/style/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<table>
+    <caption>Заказанные товары</caption>
+    <tr>
+        <th>Номер</th>
+        <th>ID заказа</th>
+        <th>Юзер</th>
+        <th>Название</th>
+        <th>Цена</th>
+        <th>Количество</th>
+        <th>Статус</th>
+        <th>Изменить статус</th>
+        <th></th>
+    </tr>
+    <c:forEach items="${requestScope.allOrders}" var="item" varStatus="infdex">
+        <tr>
+            <th><c:out value="${infdex.count}"/></th>
+            <th><c:out value="${item.id}"/></th>
+            <th><c:out value="${item.userLogin}"/></th>
+            <th><c:out value="${item.productName}"/></th>
+            <th><c:out value="${item.productPrice}"/></th>
+            <th><c:out value="${item.quantity}"/></th>
+            <th><c:out value="${item.status}"/></th>
+            <form method="get" action="${pageContext.request.contextPath}/changeBasket">
+            <th>
+                <label>
+                    <select name="newStatus">
+                        <option value="ORDER">ORDER</option>
+                        <option value="CONFIRMED">CONFIRMED</option>
+                        <option value="PAID">PAID</option>
+                    </select>
+                </label>
+            </th>
+            <th>
+                <button type="submit" name="orderId" value="${item.id}">Изменить</button>
+            </th>
+            </form>
+        </tr>
+    </c:forEach>
+    <form method="get" action="${pageContext.request.contextPath}/writeOff">
+        <label>
+            <input type="submit" value="списать товары">
+        </label>
+    </form>
+</table>
+</body>
+</html>
