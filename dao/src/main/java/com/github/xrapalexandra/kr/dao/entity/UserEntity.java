@@ -14,8 +14,6 @@ public class UserEntity {
     private String pass;
     private Role role;
 
-    private UserAddressEntity address;
-
     private List<RatingEntity> ratingList;
     private List<OrderEntity> orderList;
 
@@ -72,15 +70,6 @@ public class UserEntity {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-   @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    public UserAddressEntity getAddress() {
-        return address;
-    }
-
-    public void setAddress(UserAddressEntity address) {
-        this.address = address;
     }
 
 }

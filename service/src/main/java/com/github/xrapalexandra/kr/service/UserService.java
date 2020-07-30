@@ -1,7 +1,6 @@
 package com.github.xrapalexandra.kr.service;
 
 import com.github.xrapalexandra.kr.model.User;
-import com.github.xrapalexandra.kr.model.UserAddress;
 
 public interface UserService {
 
@@ -11,7 +10,4 @@ public interface UserService {
 
     void updatePass(User user);
 
-    void updateAddress(User user);
-
-    UserAddress getUserAddress(Integer userId);
 }
