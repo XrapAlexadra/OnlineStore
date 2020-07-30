@@ -1,6 +1,7 @@
 package com.github.xrapalexandra.kr.model;
 
-import com.google.common.base.Objects;
+
+import java.util.Objects;
 
 public class User {
 
@@ -8,7 +9,6 @@ public class User {
     private String login;
     private String pass;
     private Role role;
-    private UserAddress address;
 
     public User() {
     }
@@ -51,29 +51,6 @@ public class User {
         this.role = role;
     }
 
-    public UserAddress getAddress() {
-        return address;
-    }
-
-    public void setAddress(UserAddress address) {
-        this.address = address;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equal(login, user.login) &&
-                Objects.equal(pass, user.pass) &&
-                role == user.role;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(login, pass, role);
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -82,5 +59,21 @@ public class User {
                 ", pass='" + pass + '\'' +
                 ", role=" + role +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Id.equals(user.Id) &&
+                login.equals(user.login) &&
+                pass.equals(user.pass) &&
+                role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this);
     }
 }

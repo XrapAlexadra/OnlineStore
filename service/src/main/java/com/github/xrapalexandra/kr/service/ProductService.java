@@ -1,6 +1,7 @@
 package com.github.xrapalexandra.kr.service;
 
 import com.github.xrapalexandra.kr.model.Product;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -10,11 +11,11 @@ public interface ProductService {
 
     Boolean updateProduct(Product product);
 
-    Boolean delProduct(Integer productId);
+    void deleteProduct(Integer productId);
 
     Product getProductById(int product_id);
 
-    List<Product> getProductList(int page);
+    Page<Product> getProductsPage(int page);
 
-    Integer getPageCount();
+    List<Product> getProductListByIds(List<Integer> ids);
 }

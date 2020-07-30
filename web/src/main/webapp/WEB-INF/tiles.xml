@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+    <definition name="default" template="/WEB-INF/view/layouts/default.jspx">
+        <put-attribute name="header" value="/WEB-INF/view/common/header.jspx"/>
+        <put-attribute name="menu" value="/WEB-INF/view/common/menu.jspx"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="pagination" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/view/common/footer.jspx"/>
+    </definition>
+
+    <definition name="welcome" extends="default"/>
+
+    <definition name="login" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/user/login.jspx"/>
+    </definition>
+
+    <definition name="auth" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/user/auth.jspx"/>
+    </definition>
+
+    <definition name="products" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/general/product.jspx"/>
+    </definition>
+
+    <definition name="shopAddresses" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/general/shopAddress.jspx"/>
+    </definition>
+
+    <definition name="admins/changeProducts" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/admin/changeProduct.jspx"/>
+    </definition>
+
+    <definition name="basket" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/user/basket.jspx"/>
+    </definition>
+
+    <definition name="admins/addProducts" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/admin/addProduct.jspx"/>
+    </definition>
+
+    <definition name="messages" extends="default">
+        <put-attribute name="body" value="/WEB-INF/view/general/message.jspx"/>
+    </definition>
+
+    <definition name="pagination" extends="default">
+        <put-attribute name="pagination" value="/WEB-INF/view/general/pagination.jspx"/>
+    </definition>
+
+    <definition name="admins/basket" extends="pagination">
+        <put-attribute name="body" value="/WEB-INF/view/admin/basket.jspx"/>
+    </definition>
+
+    <definition name="admins/productsList" extends="pagination">
+        <put-attribute name="body" value="/WEB-INF/view/admin/productList.jspx"/>
+    </definition>
+
+    <definition name="productsList" extends="pagination">
+        <put-attribute name="body" value="/WEB-INF/view/general/productList.jspx"/>
+    </definition>
+</tiles-definitions>
